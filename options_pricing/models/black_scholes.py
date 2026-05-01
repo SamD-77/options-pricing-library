@@ -29,9 +29,23 @@ class BlackScholes:
         self.d2 = self.d1 - sigma * math.sqrt(t)
 
     def call_price(self):
-        """Price of a European call option"""
+        """
+        Compute the price of a European call option under the Black-Scholes model.
+        
+        Returns
+        -------
+        float
+            The Black-Scholes price of the European call option.
+        """
         return self.S * norm.cdf(self.d1) - self.K * math.exp(-self.r * self.t) * norm.cdf(self.d2)
     
     def put_price(self):
-        """Price of a European put option"""
+        """
+        Compute the price of a European put option under the Black-Scholes model.
+
+        Returns
+        -------
+        float
+            The Black-Scholes price of the European put option.
+        """
         return self.K * math.exp(-self.r * self.t) * norm.cdf(-self.d2) - self.S * norm.cdf(-self.d1)
