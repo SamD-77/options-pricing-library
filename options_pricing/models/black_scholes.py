@@ -25,8 +25,13 @@ class BlackScholes:
         self.t = t
         self.sigma = sigma
 
-        self.d1 = (math.log(S / K ) + (r + (sigma**2 / 2)) * t) / (sigma * math.sqrt(t))
-        self.d2 = self.d1 - sigma * math.sqrt(t)
+    @property    
+    def d1(self):
+        return (math.log(self.S / self.K ) + (self.r + (self.sigma**2 / 2)) * self.t) / (self.sigma * math.sqrt(self.t))
+    
+    @property
+    def d2(self):
+        return self.d1 - self.sigma * math.sqrt(self.t)
 
     def call_price(self):
         """
@@ -50,6 +55,38 @@ class BlackScholes:
         """
         return self.K * math.exp(-self.r * self.t) * norm.cdf(-self.d2) - self.S * norm.cdf(-self.d1)
     
+    def price_with_sigma(self, sigma, option_type="call"):
+        """
+        Compute the option price using a temporary volatility value without permanently modifying self.sigma.
+
+        Parameters
+        ----------
+        sigma : float
+            Temporary volatility value to use for pricing.
+        option_type : str
+            Type of option: "call" or "put". Default is "call".
+
+        Returns
+        -------
+        float
+            The option price.
+        """
+        original_sigma = self.sigma
+        self.sigma = sigma
+
+        option_type = option_type.lower()
+        if option_type == "call":
+            price = self.call_price()
+        
+        elif option_type == "put":
+            price = self.put_price()
+        
+        else:
+            raise ValueError("option_type must be 'call' or 'put'")
+
+        self.sigma = original_sigma
+        return price
+
     def delta(self, option_type="call"):
         """
         Compute the Delta of a European option under the Black-Scholes model.
@@ -148,3 +185,66 @@ class BlackScholes:
         
         else: 
             raise ValueError("option_type must be 'call' or 'put'")
+        
+    def implied_vol(self, market_price, option_type="call", sigma_est=0.2, tol=1e-7, max_iter=200):
+        """
+        Compute implied volatility using a hybrid approach combining Newton-Raphson with Bisection.
+
+        Parameters
+        ----------
+        market_price : float
+            Market price of the option.
+        option_type : str, optional
+            "call" or "put". Default is "call".
+        sigma_est : float, optional
+            Initial volatility guess. Default is 0.2.
+        tol : float, optional
+            Tolerance for price difference. Default is 1e-7.
+        max_iter : int, optional
+            Maximum number of iterations. Default is 100.
+
+        Returns
+        -------
+        float
+            Implied volatility.
+
+        Note
+        ----
+        This method updates self.sigma to the solved implied volatility.    
+        """
+        option_type = option_type.lower()
+
+        if option_type not in ("call", "put"):
+            raise ValueError("option_type must be 'call' or 'put'")
+        
+        sigma = sigma_est
+        low, high = 1e-5, 5.0
+
+        for _ in range(max_iter):
+            self.sigma = sigma
+
+            if option_type == "call":
+                price = self.call_price()
+            else:
+                price = self.put_price()
+            
+            diff = price - market_price
+
+            vega = self.vega()
+
+            if abs(vega) < 1e-6:
+                sigma = (low + high) / 2
+            else:
+                sigma = sigma - diff / vega
+
+            sigma = max(low, min(high, sigma))
+
+            if abs(diff) < tol:
+                break
+
+            if diff > 0:
+                high = sigma
+            else:
+                low = sigma
+
+        return sigma
