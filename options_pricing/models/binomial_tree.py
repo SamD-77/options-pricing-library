@@ -46,15 +46,15 @@ class BinomialTree():
         Price an option using the binomial tree.
 
         Parameters
-            ----------
-            option_type : {"call", "put"}, default "call"
-                Type of option to price.
-            exercise : {"european", "american"}, default "european"
-                Exercise style of the option.
+        ----------
+        option_type : {"call", "put"}, default "call"
+            Type of option to price.
+        exercise : {"european", "american"}, default "european"
+            Exercise style of the option.
 
-            Returns
-            -------
-            float
+        Returns
+        -------
+        float
         Option price.
         """
         if option_type not in {"call", "put"}:
