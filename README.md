@@ -1,7 +1,7 @@
 # Options Pricing Library
 
 A modular quantitative finance library implementing core derivatives pricing models.
-The project begins with the Black-Scholes model and expands toward a full options analytics toolkit including Greeks, implied volatility, binomial trees, Monte Carlo simulation, and volatility surface visualization.
+
 
 ## Current Features
 - Black-Scholes pricing  
@@ -11,9 +11,9 @@ The project begins with the Black-Scholes model and expands toward a full option
   - Delta, Gamma, Vega, Theta, Rho
 - Implied volatility solver
 - Volatility smile and surface 
+- Binomial tree pricing (CRR model)
 
 ## Upcoming Features
-- Binomial tree pricing (CRR model)  
 - Monte Carlo simulation
 
 ## Resources
