@@ -9,15 +9,15 @@ class BlackScholes:
         Parameters
         ----------
         S : float
-            Current underlying price
+            Current underlying asset price.
         K : float
-            Strike price
+            Strike price.
         r : float
-            Risk-free interest rate
+            Risk-free interest rate.
         t : float
-            Time to maturity
+            Time to maturity (in years).
         sigma : float
-            Annualized volatility
+            Annualized volatility of the underlying asset.
         """
         self.S = S
         self.K = K
